@@ -146,8 +146,12 @@ export function SignInForm({
         // @NOTE readOnly, not disabled: a disabled control is omitted from the
         // form values entirely, which would submit without a username.
         autoFocus={!usernameReadonly}
+        // @NOTE Clearing on change, not on blur: blur fires whenever focus
+        // moves, including when a password manager re-fills the form after the
+        // second factor field is rendered. That would discard the pending
+        // challenge without the user having edited anything.
+        onChange={clearSecondFactor}
         onBlur={(event) => {
-          clearSecondFactor()
           if (usernameReadonly) return
           let value = event.target.value.trim().toLowerCase()
           if (value.startsWith('@')) value = value.slice(1)
@@ -169,7 +173,7 @@ export function SignInForm({
         enterKeyHint={secondFactorError ? 'next' : 'done'}
         autoFocus={usernameReadonly}
         required
-        onBlur={() => clearSecondFactor()}
+        onChange={clearSecondFactor}
         labelAction={
           onForgotPassword && (
             <Button
